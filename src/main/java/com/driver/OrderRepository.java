@@ -76,6 +76,8 @@ public class OrderRepository {
     }
 
     public Integer getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId) {
+        if(!pair.containsKey(partnerId) || pair.get(partnerId).size()==0)
+            return null;
         int left = 0;
         int Time = Integer.parseInt(time.substring(0,2))*60 + Integer.parseInt(time.substring(3));
         for(String o:pair.get(partnerId)){
@@ -86,6 +88,7 @@ public class OrderRepository {
     }
 
     public String getLastDeliveryTimeByPartnerId(String partnerId) {
+        if(!pair.containsKey(partnerId))return "00:00";
         int last = 0;
         for(String o:pair.get(partnerId)){
             if(orders.get(o).getDeliveryTime()>last)
