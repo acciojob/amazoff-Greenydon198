@@ -49,11 +49,17 @@ public class OrderRepository {
     }
 
     public Integer getOrderCountByPartnerId(String partnerId) {
-        return partners.get(partnerId).getNumberOfOrders();
+        if(pair.containsKey(partnerId))
+            return pair.get(partnerId).size();
+        else
+            return 0;
     }
 
     public List<String> getOrdersByPartnerId(String partnerId) {
-        return pair.get(partnerId);
+        if(pair.containsKey(partnerId))
+            return pair.get(partnerId);
+        else
+            return new ArrayList<>();
     }
 
     public List<String> getAllOrders() {
@@ -88,7 +94,7 @@ public class OrderRepository {
         return to24hr(last);
     }
 
-    private String to24hr(int time){
+    public String to24hr(int time){
         String hr = (time/60)+"";
         String min = time%60 +"";
         if(min.length()==1)
@@ -106,11 +112,23 @@ public class OrderRepository {
                 order_partner.remove(o);
         }
         pair.remove(partnerId);
+        if(partners.containsKey(partnerId))
+            partners.remove(partnerId);
     }
 
     public void deleteOrderById(String orderId) {
         if(order_partner.containsKey(orderId)){
-            pair.get(order_partner.get(orderId)).remove(orderId);
+            String partnerid = order_partner.get(orderId);
+            ArrayList<String> curr = pair.get(partnerid);
+            for(int i=curr.size()-1;i>=0;i--){
+                if(orderId.equals(curr.get(i))){
+                    curr.remove(i);
+                    break;
+                }
+            }
+
+            partners.get(partnerid).setNumberOfOrders(pair.get(partnerid).size());
+
             order_partner.remove(orderId);
         }
         if(orders.containsKey(orderId))
